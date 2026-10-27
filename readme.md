@@ -8,8 +8,72 @@ Alamgir Munir Qazi<sup>1</sup>   John P. McCrae<sup>2</sup>   Jamal Abdul Na
 
 ## Code
 
-coming soon.
+### Prerequisites
 
-## Dataset
+#### Dataset
 
-coming soon.
+Create a folder named `dataset` and place it in the root directory.
+
+Download the source datasets from https://github.com/Nicozwy/CofCED and place them in that directory:
+
+```
+dataset/
+├── RAWFC/{train,val,test}/*.json
+└── LIAR-RAW/{train,val,test}.json
+```
+
+The generated adversarial evidence files are read from the same folders and are
+configured in `ADVERSARIAL_PATHS` at the top of `defence/cache-main.py`:
+
+```
+dataset/RAWFC/rawfc-{train,val,test}-gemma3-adversarial.json
+dataset/LIAR-RAW/liarraw-{train,val,test}-gemma3-adversarial.json
+```
+
+Only the **train** files are used by the reported experiments — contamination is
+injected into the training index, while the validation and test retrievals stay clean
+and unfiltered.
+
+### Setup
+
+#### Using UV (Preferred)
+
+```
+uv venv venv --python 3.10
+
+source venv/bin/activate
+
+uv pip install "torch>=2.6.0" torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu118
+
+uv pip install faiss-gpu-cu12
+
+uv pip install -r requirements.txt
+```
+
+#### Using Conda
+
+```
+conda create --prefix venv python=3.10
+
+conda activate venv/
+
+conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+
+conda install faiss-gpu -c conda-forge
+
+pip install -r requirements.txt
+```
+
+> **Caveat:** `transformers` must be pinned to `4.45.0`. The latest release (`4.56.1`)
+> breaks `Alibaba-NLP/gte-Qwen2-1.5B-instruct`.
+
+
+## How to run
+
+```
+python defence/cache-main.py --dataset RAWFC --model nomic --seed 43
+```
+
+## License
+
+Code is released for research use.
